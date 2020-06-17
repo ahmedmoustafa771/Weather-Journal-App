@@ -1,5 +1,5 @@
 /* Global Variables */
-const apiKey = "25118763bf66238e09c7f37ffd43b8e1";
+const apiKey = "25118763bf66238e09c7f37ffd43b8e1&units=metric";
 
 // New date instance dynamically
 let d = new Date();
@@ -14,14 +14,17 @@ document.querySelector('#generate').addEventListener('click',(event) => {
     getData(`http://api.openweathermap.org/data/2.5/weather?zip=${clientZIPCode},${clientCountryCode}&appid=${apiKey}`)
         .then((data) => {
             const temp = data.main.temp;
-            console.log(temp);
             postData('/weather', {date: newDate, temp: temp, content: feelings})
                 .then(
                     getUIContent('/UIData')
                         .then((data) => {
                             document.querySelector('#date').innerHTML = `Date: ${data.date}`;
-                            document.querySelector('#temp').innerHTML = `Temprature: ${data.temp} &deg;K`;
-                            document.querySelector('#content').innerHTML = `Feelings: ${data.content}`;
+                            document.querySelector('#temp').innerHTML = `Temprature: ${data.temp} &deg;C`;
+                            if(data.content !== ""){
+                                document.querySelector('#content').innerHTML = `Feelings: ${data.content}`;
+                            } else {
+                                document.querySelector('#content').innerHTML = null;
+                            }
                         })
                 );
         }); 
@@ -32,8 +35,7 @@ const getData = async ( url ) =>{
     const response = await fetch(url);
     try {
       const newData = await response.json();
-      console.log(newData);
-      return newData;
+        return newData;
     } 
     catch(error) {
     console.log("error", error);
